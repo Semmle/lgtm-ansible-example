@@ -1,0 +1,2 @@
+---
+lgtm_dummy_hostname: "{{ lgtm_controller_hostname }}"

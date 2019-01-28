@@ -1,0 +1,206 @@
+- name: Copy LGTM packages
+  hosts: all
+  gather_facts: true
+  tags: packages
+  tasks:
+    - name: Install rsync
+      package:
+        name: rsync
+        state: latest
+      become: true
+    - name: Create temporary directory
+      file:
+        path: /tmp/lgtm-install
+        state: directory
+    - name: Download lgtm
+      synchronize:
+        src: files/lgtm/
+        dest: /tmp/lgtm-install/lgtm
+        delete: true
+
+- name: Generate configuration files
+  hosts: all
+  gather_facts: true
+  tags: config
+  tasks:
+    - name: Make state directory
+      file:
+        path: /tmp/lgtm-install/state
+        state: directory
+    - name: Cluster configuration
+      template:
+        src: templates/lgtm-cluster-config.yml
+        dest: /tmp/lgtm-install/state/lgtm-cluster-config.yml
+    - name: Manifest
+      copy:
+        src: "{{ lgtm_manifest_file }}"
+        dest: /tmp/lgtm-install/state/manifest.xml
+    - name: Copy certificate
+      copy:
+        src: "{{ lgtm_certificate_file }}"
+        dest: /tmp/lgtm-install/state/server.crt
+        mode: 0400
+    - name: copy key file
+      copy:
+        src: "{{ lgtm_key_file }}"
+        dest: /tmp/lgtm-install/state/server.key
+        mode: 0400
+    - name: Install Java (deb)
+      apt:
+        name: openjdk-8-jre-headless
+        state: latest
+      become: true
+      when: ansible_os_family == 'Debian'
+    - name: Install Java (rpm)
+      yum:
+        name: java-1.8.0-openjdk-headless
+        state: latest
+      become: true
+      when: ansible_os_family == 'RedHat'
+    - name: Run config generation
+      command: java -jar /tmp/lgtm-install/lgtm/lgtm-config-gen.jar --input /tmp/lgtm-install/state/lgtm-cluster-config.yml --output /tmp/lgtm-install/generated --overwrite generate
+      environment:
+        LGTM_CREDENTIALS_PASSWORD: "{{ lgtm_manifest_password }}"
+
+- name: Install LGTM packages
+  hosts: all
+  tags: install
+  tasks:
+    - name: Stop LGTM components
+      shell: "lgtm-down || true"
+      become: true
+    - name: Run install-machine
+      shell: "LGTM_DONT_START=true /tmp/lgtm-install/generated/{{ lgtm_dummy_hostname }}/install-machine.sh"
+  become: true
+
+- name: Set up worker build environment
+  hosts: worker
+  tags: buildtools
+  tasks:
+    - name: Install build packages (Debian only)
+      apt:
+        name:
+        - openjdk-8-jdk-headless
+        - gradle
+        - python3-pip
+        state: latest
+      become: true
+      when: ansible_os_family == 'Debian'
+    - name: Install build packages (RedHat only)
+      yum:
+        name:
+        - java-1.8.0-openjdk-devel
+        - python36-pip
+        state: latest
+      become: true
+      when: ansible_os_family == 'RedHat'
+    - name: Install build packages (all distributions)
+      package:
+        name:
+        - maven
+        - ant
+        - make
+        - clang
+        - gcc
+        - mono-devel
+        - python-pip
+        state: latest
+      become: true
+    - name: Set up python3 link (Redhat)
+      file:
+        src: /usr/bin/python36
+        dest: /usr/bin/python3
+        state: link
+      become: true
+      when: ansible_os_family == 'RedHat'
+    - name: Set up pip3 link (Redhat)
+      file:
+        src: /usr/bin/pip3.6
+        dest: /usr/bin/pip3
+        state: link
+      become: true
+      when: ansible_os_family == 'RedHat'
+    - name: Install Python 2 pip packages
+      command: pip install packaging virtualenv
+      become: true
+    - name: Install Python 3 pip packages
+      command: pip3 install packaging virtualenv
+      become: true
+    - name: Copy git configuration
+      copy:
+        src: files/gitconfig
+        dest: /var/lib/lgtm-worker/.gitconfig
+        mode: 0400
+        owner: lgtm-worker
+      become: true
+    - name: Copy git credentials
+      template:
+        src: templates/git-credentials
+        dest: /var/lib/lgtm-worker/.git-credentials
+        mode: 0400
+        owner: lgtm-worker
+      become: true
+
+- name: Initialise LGTM and start controller
+  hosts: controller
+  gather_facts: false
+  tags: init
+  tasks:
+    - name: Copy command line tools
+      synchronize:
+        src: files/init/
+        dest: /tmp/lgtm-install/init
+        delete: true
+    - name: Copy license file
+      copy:
+        src: files/license.dat
+        dest: /tmp/lgtm-install/init/license.dat
+        mode: 0400
+    - name: Copy LGTM integrations configuration
+      template:
+        src: templates/integrations.json
+        dest: /tmp/lgtm-install/integrations.json
+        mode: 0400
+    - name: Start PostgreSQL
+      service:
+        name: postgres-lgtm
+        state: started
+    - name: Start minio
+      service:
+        name: minio
+        state: started
+    - name: Start RabbitMQ
+      service:
+        name: rabbitmq-server-lgtm
+        state: started
+    - name: lgtm-upgrade (1 of 4)
+      command: lgtm-upgrade --action CREATE --if-not-exists --config /etc/lgtm/config.json
+    - name: lgtm-upgrade (2 of 4)
+      command: lgtm-upgrade --action CONFIGURE --config /etc/lgtm/config.json
+    - name: lgtm-upgrade (3 of 4)
+      shell: lgtm-upgrade --action INITIALIZE --core /tmp/lgtm-install/init/odasa*.zip --license /tmp/lgtm-install/init/*license*.dat
+    - name: lgtm-upgrade (4 of 4)
+      command: lgtm-upgrade --action VALIDATE
+    - name: Bring up lgtm on controller
+      command: lgtm-up
+    - name: Configure integrations
+      command: lgtm-cli patch-config /tmp/lgtm-install/integrations.json
+  become: true
+
+- name: Start LGTM
+  hosts: all:!controller
+  tags: start
+  tasks:
+    - name: Run lgtm-up
+      command: lgtm-up
+  become: true
+
+- name: Run data migrations
+  hosts: controller
+  tags: migrate
+  tasks:
+    - name: Upgrade (1 of 2)
+      command: lgtm-upgrade --action FULL
+    - name: Upgrade (2 of 2)
+      command: lgtm-upgrade --action CHECK
+  become: true

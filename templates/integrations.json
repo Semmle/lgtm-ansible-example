@@ -1,0 +1,57 @@
+{
+  "access" : {
+    "authentication" : {
+      "require_login" : true,
+      "allow_registration" : false,
+      "providers" : {
+        "myghe" : {
+          "type" : "GITHUB_ENTERPRISE",
+          "display_name" : "GHE",
+          "show_on_homepage" : true,
+          "client_id" : "{{ lgtm_ghe_client_id }}",
+          "client_secret" : "{{ lgtm_ghe_client_secret }}",
+          "url" : "{{ lgtm_ghe_url }}"
+        }
+      },
+      "password_login" : "unrestricted"
+    },
+    "authorization" : {
+      "private_projects_visibility" : "RESTRICTED",
+      "providers" : {
+        "public" : {
+          "type" : "PUBLIC",
+          "display_name" : "Public"
+        },
+        "private" : {
+          "type" : "PRIVATE",
+          "display_name" : "Private"
+        },
+        "myghe" : {
+          "type" : "GITHUB_ENTERPRISE",
+          "display_name" : "GHE",
+          "authentication_provider_id" : "myghe",
+          "url" : "{{ lgtm_ghe_url }}"
+        }
+      }
+    },
+    "repo" : {
+      "providers" : {
+        "myghe" : {
+          "type" : "GITHUB_ENTERPRISE",
+          "display_name" : "GHE",
+          "short_name" : "m",
+          "authentication_provider_id" : "myghe",
+          "authorization_provider_id" : "myghe",
+          "allow_user_add_projects" : true,
+          "checkout_method" : "HTTPS",
+          "checkout_credentials" : {
+            "type" : "USERNAME_PASSWORD",
+            "username" : "{{ lgtm_ghe_checkout_username }}",
+            "password" : "{{ lgtm_ghe_checkout_password }}"
+          },
+          "url" : "{{ lgtm_ghe_url }}"
+        }
+      }
+    }
+  }
+}

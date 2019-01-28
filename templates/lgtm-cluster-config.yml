@@ -1,0 +1,39 @@
+version: 4
+coordinator:
+  hostname: "{{ lgtm_controller_hostname }}"
+database:
+  hostname: "{{ lgtm_controller_hostname }}"
+file_storage:
+  hostname: "{{ lgtm_controller_hostname }}"
+queue:
+  hostname: "{{ lgtm_controller_hostname }}"
+search:
+  hostname: "{{ lgtm_controller_hostname }}"
+web:
+  hosts:
+  - hostname: "dummy-web"
+  external_url: "{{ lgtm_external_url }}/"
+  ssl:
+    certificate_path: "server.crt"
+    key_path: "server.key"
+    hsts: false
+  redirect_to_external_url: false
+workers:
+  hosts:
+  - hostname: "dummy-web"
+    general: 0
+    query: 1
+    on_demand: 0
+    labels: []
+  - hostname: "dummy-general-worker"
+    general: 1
+    query: 0
+    on_demand: 0
+    labels: []
+  - hostname: "dummy-on-demand-worker"
+    general: 0
+    query: 0
+    on_demand: 1
+    labels: []
+  temp_path: "/var/cache/lgtm/workers/"
+data_path: "/var/lib/lgtm/"

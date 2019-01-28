@@ -1,0 +1,15 @@
+[controller]
+lgtm-dev-controller
+
+[web]
+lgtm-dev-web1
+
+[worker:children]
+general-worker
+on-demand-worker
+
+[general-worker]
+lgtm-dev-general-worker1
+
+[on-demand-worker]
+lgtm-dev-on-demand-worker1
