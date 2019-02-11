@@ -71,7 +71,7 @@
       become: true
     - name: Run install-machine
       shell: "LGTM_DONT_START=true /tmp/lgtm-install/generated/{{ lgtm_dummy_hostname }}/install-machine.sh"
-  become: true
+      become: true
 
 - name: Set up worker build environment
   hosts: worker
@@ -165,27 +165,35 @@
       service:
         name: postgres-lgtm
         state: started
+      become: true
     - name: Start minio
       service:
         name: minio
         state: started
+      become: true
     - name: Start RabbitMQ
       service:
         name: rabbitmq-server-lgtm
         state: started
+      become: true
     - name: lgtm-upgrade (1 of 4)
       command: lgtm-upgrade --action CREATE --if-not-exists --config /etc/lgtm/config.json
+      become: true
     - name: lgtm-upgrade (2 of 4)
       command: lgtm-upgrade --action CONFIGURE --config /etc/lgtm/config.json
+      become: true
     - name: lgtm-upgrade (3 of 4)
       shell: lgtm-upgrade --action INITIALIZE --core /tmp/lgtm-install/init/odasa*.zip --license /tmp/lgtm-install/init/*license*.dat
+      become: true
     - name: lgtm-upgrade (4 of 4)
       command: lgtm-upgrade --action VALIDATE
+      become: true
     - name: Bring up lgtm on controller
       command: lgtm-up
+      become: true
     - name: Configure integrations
       command: lgtm-cli patch-config /tmp/lgtm-install/integrations.json
-  become: true
+      become: true
 
 - name: Start LGTM
   hosts: all:!controller
@@ -193,7 +201,7 @@
   tasks:
     - name: Run lgtm-up
       command: lgtm-up
-  become: true
+      become: true
 
 - name: Run data migrations
   hosts: controller
@@ -201,6 +209,7 @@
   tasks:
     - name: Upgrade (1 of 2)
       command: lgtm-upgrade --action FULL
+      become: true
     - name: Upgrade (2 of 2)
       command: lgtm-upgrade --action CHECK
-  become: true
+      become: true
