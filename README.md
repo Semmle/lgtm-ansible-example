@@ -1,8 +1,8 @@
 # LGTM provisioning using Ansible
 
 This repository contains a playbook for deploying an LGTM installation in an
-automatic and reproducible way using Ansible. It includes setting up
-integration with GitHub Enterprise
+automatic and reproducible way using Ansible, including integration with
+GitHub Enterprise.
 
 ## Running
 
@@ -38,3 +38,15 @@ Then run the playbook:
 ```
 ANSIBLE_VAULT_PASSWORD_FILE=passwd-file ansible-playbook -i inventories/dev site.yml
 ```
+
+## Contributing
+
+We welcome contributions to this Ansible configuration for deploying LGTM. If
+you have an idea or a bugfix then please go ahead an open a pull request!
+Before you do, though, please take the time to read our [contributing
+guidelines](CONTRIBUTING.md).
+
+## License
+
+The configuration files, scripts, and other files in this repository are
+licensed under [Apache License 2.0](LICENSE) by [Semmle](https://semmle.com).
