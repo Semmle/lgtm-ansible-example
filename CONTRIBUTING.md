@@ -1,6 +1,6 @@
 # Contributing to Semmle open-source projects
 
-We welcome contributions to our project. If you have an idea or a bugfix then please go ahead an open a Pull Request!
+We welcome contributions to our project. If you have an idea or a bugfix then please go ahead an open a pull request!
 
 Before we accept your pull request, we will require that you have agreed to our Contributor License Agreement. This is not something that you need to do before you submit your pull request, but until you've done so, we will be unable to accept your contribution.
 
