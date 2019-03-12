@@ -22,7 +22,7 @@ read -p "Enter a secure password for the LGTM manifest: " manifest_password
 export LGTM_CREDENTIALS_PASSWORD="$manifest_password"
 add_secret lgtm_manifest_password "${manifest_password}"
 
-for var in lgtm_ghe_checkout_username lgtm_ghe_checkout_password lgtm_ghe_client_id lgtm_ghe_client_secret
+for var in lgtm_ghe_checkout_username lgtm_ghe_checkout_token lgtm_ghe_client_id lgtm_ghe_client_secret
 do
 	read -p "Enter value for ${var}: " secret
 	add_secret "$var" "$secret"

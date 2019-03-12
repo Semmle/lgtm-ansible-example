@@ -47,7 +47,7 @@
           "checkout_credentials" : {
             "type" : "USERNAME_PASSWORD",
             "username" : "{{ lgtm_ghe_checkout_username }}",
-            "password" : "{{ lgtm_ghe_checkout_password }}"
+            "password" : "{{ lgtm_ghe_checkout_token }}"
           },
           "url" : "{{ lgtm_ghe_url }}"
         }
