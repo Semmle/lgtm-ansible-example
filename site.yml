@@ -17,6 +17,7 @@
         src: files/lgtm/
         dest: /tmp/lgtm-install/lgtm
         delete: true
+        recursive: true
 
 - name: Generate configuration files
   hosts: all
@@ -151,6 +152,7 @@
         src: files/init/
         dest: /tmp/lgtm-install/init
         delete: true
+        recursive: true
     - name: Copy license file
       copy:
         src: files/license.dat
