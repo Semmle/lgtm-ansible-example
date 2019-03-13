@@ -178,16 +178,19 @@
         name: rabbitmq-server-lgtm
         state: started
       become: true
-    - name: lgtm-upgrade (1 of 4)
+    - name: lgtm-upgrade (1 of 5)
       command: lgtm-upgrade --action CREATE --if-not-exists --config /etc/lgtm/config.json
       become: true
-    - name: lgtm-upgrade (2 of 4)
+    - name: lgtm-upgrade (2 of 5)
+      command: lgtm-upgrade --action full --schema-only
+      become: true
+    - name: lgtm-upgrade (3 of 5)
       command: lgtm-upgrade --action CONFIGURE --config /etc/lgtm/config.json
       become: true
-    - name: lgtm-upgrade (3 of 4)
+    - name: lgtm-upgrade (4 of 5)
       shell: lgtm-upgrade --action INITIALIZE --core /tmp/lgtm-install/init/odasa*.zip --license /tmp/lgtm-install/init/*license*.dat
       become: true
-    - name: lgtm-upgrade (4 of 4)
+    - name: lgtm-upgrade (5 of 5)
       command: lgtm-upgrade --action VALIDATE
       become: true
     - name: Bring up lgtm on controller
