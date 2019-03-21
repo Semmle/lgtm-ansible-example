@@ -42,7 +42,7 @@ ANSIBLE_VAULT_PASSWORD_FILE=passwd-file ansible-playbook -i inventories/dev site
 ## Contributing
 
 We welcome contributions to this Ansible configuration for deploying LGTM. If
-you have an idea or a bugfix then please go ahead an open a pull request!
+you have an idea or a bugfix then please go ahead and open a pull request!
 Before you do, though, please take the time to read our [contributing
 guidelines](CONTRIBUTING.md).
 
