@@ -182,10 +182,10 @@
       command: lgtm-upgrade --action CREATE --if-not-exists --config /etc/lgtm/config.json
       become: true
     - name: lgtm-upgrade (2 of 5)
-      command: lgtm-upgrade --action full --schema-only
+      command: lgtm-upgrade --action CONFIGURE --config /etc/lgtm/config.json
       become: true
     - name: lgtm-upgrade (3 of 5)
-      command: lgtm-upgrade --action CONFIGURE --config /etc/lgtm/config.json
+      command: lgtm-upgrade --action FULL --schema-only
       become: true
     - name: lgtm-upgrade (4 of 5)
       shell: lgtm-upgrade --action INITIALIZE --core /tmp/lgtm-install/init/odasa*.zip --license /tmp/lgtm-install/init/*license*.dat
