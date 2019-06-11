@@ -114,13 +114,6 @@
         state: link
       become: true
       when: ansible_os_family == 'RedHat'
-    - name: Set up pip3 link (Redhat)
-      file:
-        src: /usr/bin/pip3.6
-        dest: /usr/bin/pip3
-        state: link
-      become: true
-      when: ansible_os_family == 'RedHat'
     - name: Install Python 2 pip packages
       command: pip install packaging virtualenv
       become: true
