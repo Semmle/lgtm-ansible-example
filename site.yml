@@ -147,16 +147,10 @@
   gather_facts: false
   tags: init
   tasks:
-    - name: Copy command line tools
-      synchronize:
-        src: files/init/
-        dest: /tmp/lgtm-install/init
-        delete: true
-        recursive: true
     - name: Copy license file
       copy:
         src: files/license.dat
-        dest: /tmp/lgtm-install/init/license.dat
+        dest: /tmp/lgtm-install/init/
         mode: 0400
     - name: Copy LGTM integrations configuration
       template:
@@ -188,7 +182,7 @@
       command: lgtm-upgrade --action FULL --schema-only
       become: true
     - name: lgtm-upgrade (4 of 5)
-      shell: lgtm-upgrade --action INITIALIZE --core /tmp/lgtm-install/init/odasa*.zip --license /tmp/lgtm-install/init/*license*.dat
+      shell: lgtm-upgrade --action INITIALIZE --license /tmp/lgtm-install/init/*license*.dat
       become: true
     - name: lgtm-upgrade (5 of 5)
       command: lgtm-upgrade --action VALIDATE
