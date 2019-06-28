@@ -17,6 +17,6 @@ rm -rf "${files_dir}"/init/odasa-*
 # Unpack LGTM artifacts and put them in place
 tar -xzf "$lgtm_bundle" -C "${files_dir}"
 mkdir -p "${files_dir}"/{lgtm,init}
-mv "${files_dir}"/lgtm-*/lgtm/*.{rpm,deb,jar} "${files_dir}/lgtm"
-mv "${files_dir}"/lgtm-*/lgtm/odasa-*.zip "${files_dir}/init"
+rm "${files_dir}"/lgtm-*/lgtm/*.sh
+mv "${files_dir}"/lgtm-*/lgtm/* "${files_dir}/lgtm"
 rm -r "${files_dir}"/lgtm-*
