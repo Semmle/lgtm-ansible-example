@@ -150,20 +150,8 @@
         src: templates/integrations.json
         dest: /tmp/lgtm-install/integrations.json
         mode: 0400
-    - name: Start PostgreSQL
-      service:
-        name: postgres-lgtm
-        state: started
-      become: true
-    - name: Start minio
-      service:
-        name: minio
-        state: started
-      become: true
-    - name: Start RabbitMQ
-      service:
-        name: rabbitmq-server-lgtm
-        state: started
+    - name: Start core services
+      command: lgtm-up --core-only
       become: true
     - name: lgtm-upgrade (1 of 5)
       command: lgtm-upgrade --action CREATE --if-not-exists --config /etc/lgtm/config.json
