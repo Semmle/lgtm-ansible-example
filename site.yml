@@ -163,10 +163,13 @@
       command: lgtm-upgrade --action FULL --schema-only
       become: true
     - name: lgtm-upgrade (4 of 5)
-      shell: lgtm-upgrade --action INITIALIZE --license /tmp/lgtm-install/init/*license*.dat
+      command: lgtm-upgrade --action INITIALIZE
       become: true
     - name: lgtm-upgrade (5 of 5)
       command: lgtm-upgrade --action VALIDATE
+      become: true
+    - name: Install license
+      shell: lgtm-cli license --install /tmp/lgtm-install/init/*license*.dat
       become: true
     - name: Bring up lgtm on controller
       command: lgtm-up
