@@ -1,0 +1,5 @@
+{
+  "server" : {
+    "url" : "{{ lgtm_external_url }}/"
+  }
+}
