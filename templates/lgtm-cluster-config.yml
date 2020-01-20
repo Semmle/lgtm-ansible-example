@@ -12,7 +12,6 @@ search:
 web:
   hosts:
   - hostname: "dummy-web"
-  external_url: "{{ lgtm_external_url }}/"
   ssl:
     certificate_path: "server.crt"
     key_path: "server.key"
