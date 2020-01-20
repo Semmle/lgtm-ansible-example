@@ -150,6 +150,11 @@
         src: templates/integrations.json
         dest: /tmp/lgtm-install/integrations.json
         mode: 0400
+    - name: Copy LGTM server configuration
+      template:
+        src: templates/server.json
+        dest: /tmp/lgtm-install/server.json
+        mode: 0400
     - name: Start core services
       command: lgtm-up --core-only
       become: true
@@ -176,6 +181,9 @@
       become: true
     - name: Configure integrations
       command: lgtm-cli patch-config /tmp/lgtm-install/integrations.json
+      become: true
+    - name: Configure web server
+      command: lgtm-cli patch-config /tmp/lgtm-install/server.json
       become: true
 
 - name: Start LGTM
