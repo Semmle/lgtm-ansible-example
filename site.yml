@@ -1,5 +1,5 @@
-- name: Copy LGTM packages
-  hosts: all
+- name: Copy LGTM packages (controller)
+  hosts: controller
   gather_facts: true
   tags: packages
   tasks:
@@ -18,6 +18,29 @@
         dest: /tmp/lgtm-install/lgtm
         delete: true
         recursive: true
+
+- name: Copy LGTM packages (non-controllers)
+  hosts: all:!controller
+  gather_facts: true
+  tags: packages
+  tasks:
+    - name: Install rsync
+      package:
+        name: rsync
+        state: latest
+      become: true
+    - name: Create temporary directory
+      file:
+        path: /tmp/lgtm-install
+        state: directory
+    - name: Download lgtm
+      synchronize:
+        src: files/lgtm/
+        dest: /tmp/lgtm-install/lgtm
+        delete: true
+        recursive: true
+        rsync_opts:
+          - '--exclude=lgtm-upgrade*'
 
 - name: Generate configuration files
   hosts: all
