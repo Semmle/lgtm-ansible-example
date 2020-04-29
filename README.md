@@ -39,6 +39,22 @@ Then run the playbook:
 ANSIBLE_VAULT_PASSWORD_FILE=passwd-file ansible-playbook -i inventories/dev site.yml
 ```
 
+## Troubleshooting
+
+In order to run this playbook, you need one machine with Ansible installed (and
+this repository checked out) and several target machines (the machines you wish
+to install LGTM on).
+
+There should be a good network connection between the machine running Ansible
+and the target machines, as large packages are copied to the target machines.
+
+The target machines should have Python (2 or 3) installed. If they do not, you
+will see this error message:
+
+```
+fatal: [lgtm-dev-controller]: FAILED! => {"changed": false, "module_stderr": "Shared connection to julian-lgtm-dev-controller closed.\r\n", "module_stdout": "/bin/sh: 1: /usr/bin/python: not found\r\n", "msg": "MODULE FAILURE", "rc": 127}
+```
+
 ## Contributing
 
 We welcome contributions to this Ansible configuration for deploying LGTM. If
