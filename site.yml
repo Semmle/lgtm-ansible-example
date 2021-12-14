@@ -133,6 +133,14 @@
         state: latest
       become: true
       when: ansible_os_family == 'RedHat'
+    - name: Add Mono repository (RedHat only)
+      yum_repository:
+        name: mono
+        description: Mono
+        baseurl: https://download.mono-project.com/repo/centos7-stable/
+        gpgkey: https://download.mono-project.com/repo/xamarin.gpg
+      become: true
+      when: ansible_os_family == 'RedHat'
     - name: Install build packages (all distributions)
       package:
         name:
