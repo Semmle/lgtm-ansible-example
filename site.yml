@@ -144,13 +144,6 @@
         - mono-devel
         state: latest
       become: true
-    - name: Install python-pip
-      package:
-        name:
-        - python-pip
-        state: latest
-      become: true
-      when: "ansible_distribution != 'Ubuntu' or ansible_distribution_major_version != '20'"
     - name: Set up python3 link (Redhat)
       file:
         src: /usr/bin/python3.6
@@ -158,10 +151,6 @@
         state: link
       become: true
       when: ansible_os_family == 'RedHat'
-    - name: Install Python 2 pip packages
-      command: pip install packaging virtualenv
-      become: true
-      when: "ansible_distribution != 'Ubuntu' or ansible_distribution_major_version != '20'"
     - name: Install Python 3 pip packages
       command: pip3 install packaging virtualenv
       become: true
